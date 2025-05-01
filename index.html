@@ -114,9 +114,9 @@
 
     const pixels = [];
 
-    function spawnPixel(x, y, temporary = false) {
+    function spawnPixel(x, y, colorOverride = null, temporary = false) {
       const size = 14;
-      const color = Math.random() > 0.5 ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.7)';
+      const color = colorOverride || (Math.random() > 0.5 ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.7)');
       const life = temporary ? 1000 + Math.random() * 1000 : null;
       pixels.push(new Pixel(x, y, size, color, life));
     }
@@ -127,28 +127,46 @@
       const centerX = canvas.width / 2;
       const centerY = canvas.height / 2;
 
-      const pShape = [
-        [0,0],[0,1],[0,2],[0,3],
-        [1,0],[1,2],
-        [2,0],[2,1],
-      ];
+      const textMap = [
+  "PPP           l     H  H     l l  ",
+  "P P i         l     H  H     l l sss  ",
+  "PPP   x x eee l     HHHH aaa l l ss ",
+  "P   i  x  e   l     H  H a a l l   s ",
+  "P   i x x eee l     H  H aaaal l sss "
+];
 
       const pPixelCoords = new Set();
-      const pScale = 30;
-      const pOffsetX = -1;
-      const pOffsetY = -2;
+      const textPixelSize = 14;
+      const pSpacing = textPixelSize;
+      const charSpacing = 1;
 
-      for (const [dx, dy] of pShape) {
-        const px = Math.round(centerX + (dx + pOffsetX) * spacing);
-        const py = Math.round(centerY + (dy + pOffsetY) * spacing);
-        pPixelCoords.add(`${px},${py}`);
-        spawnPixel(px, py);
+      for (let row = 0; row < textMap.length; row++) {
+        for (let col = 0; col < textMap[row].length; col++) {
+          if (textMap[row][col] !== ' ') {
+            const px = Math.round(centerX + (col - textMap[0].length / 2) * (pSpacing + charSpacing));
+            const py = Math.round(centerY + (row - textMap.length / 2) * (pSpacing + charSpacing));
+            pPixelCoords.add(`${px},${py}`);
+            spawnPixel(px, py, 'rgba(255,255,255,0.9)');
+          }
+        }
       }
 
       for (let x = 0; x < canvas.width; x += spacing) {
         for (let y = 0; y < canvas.height; y += spacing) {
-          if (!pPixelCoords.has(`${x + offset},${y + offset}`)) {
-            spawnPixel(x + offset, y + offset);
+          const roundedX = Math.round(x + offset);
+          const roundedY = Math.round(y + offset);
+          let isNearText = false;
+          for (let px = -pSpacing; px <= pSpacing; px++) {
+            for (let py = -pSpacing; py <= pSpacing; py++) {
+              if (pPixelCoords.has(`${roundedX + px},${roundedY + py}`)) {
+                isNearText = true;
+                break;
+              }
+            }
+            if (isNearText) break;
+          }
+          if (!isNearText) {
+            spawnPixel(roundedX, roundedY);
           }
         }
       }
