@@ -27,11 +27,29 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      z-index: 3;
+      z-index: 4;
       font-size: 4rem;
       text-align: center;
-      pointer-events: auto;
-      animation: bubblePulse 3s infinite ease-in-out;
+      pointer-events: none;
+    }
+
+    .center-text span {
+      display: inline-block;
+      animation: bubbleChar 1.5s infinite ease-in-out alternate;
+    }
+
+    .center-text span:nth-child(odd) {
+      animation-delay: 0.1s;
+    }
+
+    .center-text span:nth-child(even) {
+      animation-delay: 0.3s;
+    }
+
+    @keyframes bubbleChar {
+      0% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-5px) scale(1.2); }
+      100% { transform: translateY(0) scale(1); }
     }
 
     .bg-circle {
@@ -63,24 +81,12 @@
         opacity: 0.6;
       }
     }
-
-    @keyframes bubblePulse {
-      0%, 100% {
-        transform: translate(-50%, -50%) scale(1);
-      }
-      30% {
-        transform: translate(-50%, -50%) scale(1.15);
-      }
-      60% {
-        transform: translate(-50%, -50%) scale(1.05);
-      }
-    }
   </style>
 </head>
 <body>
   <div class="bg-circle"></div>
   <canvas id="pixelCanvas"></canvas>
-  <div class="center-text" id="centerText">Pixel Halls</div>
+  <div class="center-text" id="centerText"></div>
 
   <section></section>
   <section></section>
@@ -91,6 +97,10 @@
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+
+    const centerText = document.getElementById('centerText');
+    const phrase = "Pixel Halls";
+    centerText.innerHTML = phrase.split('').map(letter => `<span>${letter}</span>`).join('');
 
     class Pixel {
       constructor(x, y, size, color, life = null) {
@@ -117,6 +127,16 @@
         if (this.life) {
           const fade = 1 - age / this.life;
           scale *= fade;
+        }
+
+        const textRect = centerText.getBoundingClientRect();
+        if (
+          this.x > textRect.left &&
+          this.x < textRect.right &&
+          this.y > textRect.top &&
+          this.y < textRect.bottom
+        ) {
+          return true; // skip drawing overlapping pixels
         }
 
         ctx.save();
@@ -147,7 +167,7 @@
     }
 
     function generatePixelsGrid() {
-      const spacing = 35;
+      const spacing = 30;
       const offset = 5;
       for (let x = 0; x < canvas.width; x += spacing) {
         for (let y = 0; y < canvas.height; y += spacing) {
@@ -186,16 +206,6 @@
     window.addEventListener('scroll', () => {
       const scrollY = window.scrollY;
       document.body.style.backgroundPosition = `center ${scrollY * 0.5}px`;
-    });
-
-    const centerText = document.getElementById('centerText');
-    centerText.addEventListener('mouseenter', () => {
-      const rect = centerText.getBoundingClientRect();
-      for (let i = 0; i < 30; i++) {
-        const x = rect.left + Math.random() * rect.width;
-        const y = rect.top + Math.random() * rect.height;
-        spawnPixel(x, y, true);
-      }
     });
 
     generatePixelsGrid();
