@@ -30,7 +30,8 @@
       z-index: 3;
       font-size: 4rem;
       text-align: center;
-      pointer-events: none;
+      pointer-events: auto;
+      animation: textPulse 2.5s infinite ease-in-out;
     }
 
     .bg-circle {
@@ -62,12 +63,21 @@
         opacity: 0.6;
       }
     }
+
+    @keyframes textPulse {
+      0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+      }
+      50% {
+        transform: translate(-50%, -50%) scale(1.1);
+      }
+    }
   </style>
 </head>
 <body>
   <div class="bg-circle"></div>
   <canvas id="pixelCanvas"></canvas>
-  <div class="center-text">Pixel Halls</div>
+  <div class="center-text" id="centerText">Pixel Halls</div>
 
   <section></section>
   <section></section>
@@ -80,28 +90,39 @@
     canvas.height = window.innerHeight;
 
     class Pixel {
-      constructor(x, y, size, color) {
+      constructor(x, y, size, color, life = null) {
         this.x = x;
         this.y = y;
         this.size = size;
         this.color = color;
         this.hovered = false;
+        this.created = Date.now();
+        this.life = life; // in ms; null = permanent
       }
 
       draw(ctx) {
         const time = performance.now() / 1000;
+        const age = Date.now() - this.created;
         const pulse = this.hovered ? 1 + 0.4 * Math.sin(time * 4) : 1;
         const angle = this.hovered ? Math.sin(time * 6) * 0.2 : 0;
-        const size = this.size * pulse;
+        let scale = this.size * pulse;
+
+        if (this.life && age > this.life) return false;
+        if (this.life) {
+          const fade = 1 - age / this.life;
+          scale *= fade;
+        }
 
         ctx.save();
         ctx.translate(this.x, this.y);
         ctx.rotate(angle);
         ctx.fillStyle = this.color;
         ctx.beginPath();
-        ctx.roundRect(-size / 2, -size / 2, size, size, 3);
+        ctx.roundRect(-scale / 2, -scale / 2, scale, scale, 3);
         ctx.fill();
         ctx.restore();
+
+        return true;
       }
 
       checkHover(mx, my) {
@@ -112,14 +133,15 @@
 
     const pixels = [];
 
-    function spawnPixel(x, y) {
+    function spawnPixel(x, y, temporary = false) {
       const size = 14;
       const color = Math.random() > 0.5 ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.7)';
-      pixels.push(new Pixel(x, y, size, color));
+      const life = temporary ? 1000 + Math.random() * 1000 : null;
+      pixels.push(new Pixel(x, y, size, color, life));
     }
 
     function generatePixelsGrid() {
-      const spacing = 60;
+      const spacing = 45;
       const offset = 10;
       for (let x = 0; x < canvas.width; x += spacing) {
         for (let y = 0; y < canvas.height; y += spacing) {
@@ -130,7 +152,11 @@
 
     function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      pixels.forEach(p => p.draw(ctx));
+      for (let i = pixels.length - 1; i >= 0; i--) {
+        if (!pixels[i].draw(ctx)) {
+          pixels.splice(i, 1);
+        }
+      }
       requestAnimationFrame(animate);
     }
 
@@ -154,6 +180,16 @@
     window.addEventListener('scroll', () => {
       const scrollY = window.scrollY;
       document.body.style.backgroundPosition = `center ${scrollY * 0.5}px`;
+    });
+
+    const centerText = document.getElementById('centerText');
+    centerText.addEventListener('mouseenter', () => {
+      const rect = centerText.getBoundingClientRect();
+      for (let i = 0; i < 20; i++) {
+        const x = rect.left + Math.random() * rect.width;
+        const y = rect.top + Math.random() * rect.height;
+        spawnPixel(x, y, true);
+      }
     });
 
     generatePixelsGrid();
