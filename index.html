@@ -85,32 +85,23 @@
         this.y = y;
         this.size = size;
         this.color = color;
-        this.life = 5000;
-        this.start = Date.now();
         this.hovered = false;
-        this.angle = 0;
       }
 
       draw(ctx) {
-        const age = Date.now() - this.start;
-        const time = (age % 1000) / 1000;
-        const hoverBoost = this.hovered ? 1 + 0.6 * Math.sin(time * Math.PI) : 1;
-        const easing = this.hovered ? 1 : 0.8 + 0.2 * Math.sin(time * Math.PI * 2);
-        const size = this.size * hoverBoost * easing;
-        const rotation = this.hovered ? Math.sin(time * Math.PI * 2) * 0.2 : 0;
+        const time = performance.now() / 1000;
+        const pulse = this.hovered ? 1 + 0.4 * Math.sin(time * 4) : 1;
+        const angle = this.hovered ? Math.sin(time * 6) * 0.2 : 0;
+        const size = this.size * pulse;
 
         ctx.save();
         ctx.translate(this.x, this.y);
-        ctx.rotate(rotation);
+        ctx.rotate(angle);
         ctx.fillStyle = this.color;
         ctx.beginPath();
         ctx.roundRect(-size / 2, -size / 2, size, size, 3);
         ctx.fill();
         ctx.restore();
-      }
-
-      isExpired() {
-        return Date.now() - this.start > this.life;
       }
 
       checkHover(mx, my) {
@@ -128,24 +119,18 @@
     }
 
     function generatePixelsGrid() {
-      const spacing = 50;
+      const spacing = 60;
+      const offset = 10;
       for (let x = 0; x < canvas.width; x += spacing) {
         for (let y = 0; y < canvas.height; y += spacing) {
-          spawnPixel(x + Math.random() * spacing, y + Math.random() * spacing);
+          spawnPixel(x + offset, y + offset);
         }
       }
     }
 
     function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (let i = pixels.length - 1; i >= 0; i--) {
-        const p = pixels[i];
-        if (p.isExpired()) {
-          pixels.splice(i, 1);
-        } else {
-          p.draw(ctx);
-        }
-      }
+      pixels.forEach(p => p.draw(ctx));
       requestAnimationFrame(animate);
     }
 
@@ -162,6 +147,8 @@
     window.addEventListener('resize', () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      pixels.length = 0;
+      generatePixelsGrid();
     });
 
     window.addEventListener('scroll', () => {
