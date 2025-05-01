@@ -190,11 +190,17 @@
     let mouseY = 0;
 
     canvas.addEventListener('mousemove', (e) => {
-      const rect = canvas.getBoundingClientRect();
-      mouseX = e.clientX - rect.left;
-      mouseY = e.clientY - rect.top;
-      pixels.forEach(p => p.checkHover(mouseX, mouseY));
-    });
+  const rect = canvas.getBoundingClientRect();
+  mouseX = e.clientX - rect.left;
+  mouseY = e.clientY - rect.top;
+  const radius = 50;
+  pixels.forEach(p => {
+    const dx = p.x - mouseX;
+    const dy = p.y - mouseY;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    p.hovered = distance < radius;
+  });
+});
 
     window.addEventListener('resize', () => {
       canvas.width = window.innerWidth;
