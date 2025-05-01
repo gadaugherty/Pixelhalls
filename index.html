@@ -17,12 +17,20 @@
 
     section {
       height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       font-size: 3rem;
       position: relative;
       z-index: 1;
+    }
+
+    .center-text {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 3;
+      font-size: 4rem;
+      text-align: center;
+      pointer-events: none;
     }
 
     .bg-circle {
@@ -40,7 +48,7 @@
       position: fixed;
       top: 0;
       left: 0;
-      pointer-events: none;
+      pointer-events: auto;
       z-index: 2;
     }
 
@@ -59,10 +67,11 @@
 <body>
   <div class="bg-circle"></div>
   <canvas id="pixelCanvas"></canvas>
+  <div class="center-text">Pixel Halls</div>
 
-  <section id="intro">Pixel Halls</section>
-  <section id="scroll"></section>
-  <section id="end"></section>
+  <section></section>
+  <section></section>
+  <section></section>
 
   <script>
     const canvas = document.getElementById('pixelCanvas');
@@ -76,32 +85,45 @@
         this.y = y;
         this.size = size;
         this.color = color;
-        this.life = 3000;
+        this.life = 5000;
         this.start = Date.now();
-        this.grow = true;
+        this.hovered = false;
+        this.angle = 0;
       }
 
       draw(ctx) {
         const age = Date.now() - this.start;
-        const progress = age / this.life;
-        let pulseSize = this.size;
-        if (progress < 0.5) {
-          pulseSize = this.size * (1.5 - progress);
-        }
+        const time = (age % 1000) / 1000;
+        const hoverBoost = this.hovered ? 1 + 0.6 * Math.sin(time * Math.PI) : 1;
+        const easing = this.hovered ? 1 : 0.8 + 0.2 * Math.sin(time * Math.PI * 2);
+        const size = this.size * hoverBoost * easing;
+        const rotation = this.hovered ? Math.sin(time * Math.PI * 2) * 0.2 : 0;
+
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(rotation);
         ctx.fillStyle = this.color;
-        ctx.fillRect(this.x - pulseSize / 2, this.y - pulseSize / 2, pulseSize, pulseSize);
+        ctx.beginPath();
+        ctx.roundRect(-size / 2, -size / 2, size, size, 3);
+        ctx.fill();
+        ctx.restore();
       }
 
       isExpired() {
         return Date.now() - this.start > this.life;
+      }
+
+      checkHover(mx, my) {
+        const half = this.size / 2;
+        this.hovered = mx > this.x - half && mx < this.x + half && my > this.y - half && my < this.y + half;
       }
     }
 
     const pixels = [];
 
     function spawnPixel(x, y) {
-      const size = 10;
-      const color = Math.random() > 0.5 ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)';
+      const size = 14;
+      const color = Math.random() > 0.5 ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.7)';
       pixels.push(new Pixel(x, y, size, color));
     }
 
@@ -126,6 +148,16 @@
       }
       requestAnimationFrame(animate);
     }
+
+    let mouseX = 0;
+    let mouseY = 0;
+
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouseX = e.clientX - rect.left;
+      mouseY = e.clientY - rect.top;
+      pixels.forEach(p => p.checkHover(mouseX, mouseY));
+    });
 
     window.addEventListener('resize', () => {
       canvas.width = window.innerWidth;
