@@ -60,9 +60,9 @@
   <div class="bg-circle"></div>
   <canvas id="pixelCanvas"></canvas>
 
-  <section id="intro">Welcome to Pixel Halls</section>
-  <section id="scroll">Scroll to see more</section>
-  <section id="end">More Coming Soon</section>
+  <section id="intro">Pixel Halls</section>
+  <section id="scroll"></section>
+  <section id="end"></section>
 
   <script>
     const canvas = document.getElementById('pixelCanvas');
@@ -70,23 +70,62 @@
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    function drawPixel(x, y) {
-      const size = 10;
-      const r = Math.floor(Math.random() * 255);
-      const g = Math.floor(Math.random() * 255);
-      const b = Math.floor(Math.random() * 255);
-      ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.3)`;
-      ctx.fillRect(x - size / 2, y - size / 2, size, size);
-      
-            // Erase the pixel after 3 seconds
-      setTimeout(() => {
-        ctx.clearRect(x - size / 2, y - size / 2, size, size);
-      }, 3000);
+    class Pixel {
+      constructor(x, y, size, color) {
+        this.x = x;
+        this.y = y;
+        this.size = size;
+        this.color = color;
+        this.life = 3000;
+        this.start = Date.now();
+        this.grow = true;
+      }
+
+      draw(ctx) {
+        const age = Date.now() - this.start;
+        const progress = age / this.life;
+        let pulseSize = this.size;
+        if (progress < 0.5) {
+          pulseSize = this.size * (1.5 - progress);
+        }
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.x - pulseSize / 2, this.y - pulseSize / 2, pulseSize, pulseSize);
+      }
+
+      isExpired() {
+        return Date.now() - this.start > this.life;
+      }
     }
 
-    window.addEventListener('mousemove', (e) => {
-      drawPixel(e.clientX, e.clientY);
-    });
+    const pixels = [];
+
+    function spawnPixel(x, y) {
+      const size = 10;
+      const color = Math.random() > 0.5 ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)';
+      pixels.push(new Pixel(x, y, size, color));
+    }
+
+    function generatePixelsGrid() {
+      const spacing = 50;
+      for (let x = 0; x < canvas.width; x += spacing) {
+        for (let y = 0; y < canvas.height; y += spacing) {
+          spawnPixel(x + Math.random() * spacing, y + Math.random() * spacing);
+        }
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = pixels.length - 1; i >= 0; i--) {
+        const p = pixels[i];
+        if (p.isExpired()) {
+          pixels.splice(i, 1);
+        } else {
+          p.draw(ctx);
+        }
+      }
+      requestAnimationFrame(animate);
+    }
 
     window.addEventListener('resize', () => {
       canvas.width = window.innerWidth;
@@ -97,6 +136,9 @@
       const scrollY = window.scrollY;
       document.body.style.backgroundPosition = `center ${scrollY * 0.5}px`;
     });
+
+    generatePixelsGrid();
+    animate();
   </script>
 </body>
 </html>
