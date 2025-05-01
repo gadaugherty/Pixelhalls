@@ -31,7 +31,7 @@
       font-size: 4rem;
       text-align: center;
       pointer-events: auto;
-      animation: textPulse 2.5s infinite ease-in-out;
+      animation: bubblePulse 3s infinite ease-in-out;
     }
 
     .bg-circle {
@@ -64,12 +64,15 @@
       }
     }
 
-    @keyframes textPulse {
+    @keyframes bubblePulse {
       0%, 100% {
         transform: translate(-50%, -50%) scale(1);
       }
-      50% {
-        transform: translate(-50%, -50%) scale(1.1);
+      30% {
+        transform: translate(-50%, -50%) scale(1.15);
+      }
+      60% {
+        transform: translate(-50%, -50%) scale(1.05);
       }
     }
   </style>
@@ -93,6 +96,7 @@
       constructor(x, y, size, color, life = null) {
         this.x = x;
         this.y = y;
+        this.baseSize = size;
         this.size = size;
         this.color = color;
         this.hovered = false;
@@ -103,9 +107,11 @@
       draw(ctx) {
         const time = performance.now() / 1000;
         const age = Date.now() - this.created;
-        const pulse = this.hovered ? 1 + 0.4 * Math.sin(time * 4) : 1;
+        const basePulse = 0.1 * Math.sin(time * 2 + this.x + this.y);
+        const hoverPulse = this.hovered ? 0.6 * Math.sin(time * 5) : 0;
+        const totalPulse = 1 + basePulse + hoverPulse;
         const angle = this.hovered ? Math.sin(time * 6) * 0.2 : 0;
-        let scale = this.size * pulse;
+        let scale = this.baseSize * totalPulse;
 
         if (this.life && age > this.life) return false;
         if (this.life) {
@@ -126,7 +132,7 @@
       }
 
       checkHover(mx, my) {
-        const half = this.size / 2;
+        const half = this.baseSize / 2;
         this.hovered = mx > this.x - half && mx < this.x + half && my > this.y - half && my < this.y + half;
       }
     }
@@ -141,8 +147,8 @@
     }
 
     function generatePixelsGrid() {
-      const spacing = 45;
-      const offset = 10;
+      const spacing = 35;
+      const offset = 5;
       for (let x = 0; x < canvas.width; x += spacing) {
         for (let y = 0; y < canvas.height; y += spacing) {
           spawnPixel(x + offset, y + offset);
@@ -185,7 +191,7 @@
     const centerText = document.getElementById('centerText');
     centerText.addEventListener('mouseenter', () => {
       const rect = centerText.getBoundingClientRect();
-      for (let i = 0; i < 20; i++) {
+      for (let i = 0; i < 30; i++) {
         const x = rect.left + Math.random() * rect.width;
         const y = rect.top + Math.random() * rect.height;
         spawnPixel(x, y, true);
