@@ -56,7 +56,6 @@
 <body>
   <div class="bg-circle"></div>
   <canvas id="pixelCanvas"></canvas>
-
   <section></section>
   <section></section>
   <section></section>
@@ -128,15 +127,15 @@
       const centerY = canvas.height / 2;
 
       const textMap = [
-  "PPP           l     H  H     l l  ",
-  "P P i         l     H  H     l l sss  ",
-  "PPP   x x eee l     HHHH aaa l l ss ",
-  "P   i  x  e   l     H  H a a l l   s ",
-  "P   i x x eee l     H  H aaaal l sss "
-];
+        "PPP           l     H  H     l l  ",
+        "P P i         l     H  H     l l sss  ",
+        "PPP   x x eee l     HHHH aaa l l ss ",
+        "P   i  x  e   l     H  H a a l l   s ",
+        "P   i x x eee l     H  H aaaal l sss "
+      ];
 
-      const pPixelCoords = new Set();
-      const textPixelSize = 14;
+      const pPixelCoords = [];
+      const textPixelSize = Math.min(canvas.width, canvas.height) / 60;
       const pSpacing = textPixelSize;
       const charSpacing = 1;
 
@@ -145,27 +144,28 @@
           if (textMap[row][col] !== ' ') {
             const px = Math.round(centerX + (col - textMap[0].length / 2) * (pSpacing + charSpacing));
             const py = Math.round(centerY + (row - textMap.length / 2) * (pSpacing + charSpacing));
-            pPixelCoords.add(`${px},${py}`);
+            pPixelCoords.push([px, py]);
             spawnPixel(px, py, 'rgba(255,255,255,0.9)');
           }
         }
       }
 
+      const exclusionRadius = spacing;
       for (let x = 0; x < canvas.width; x += spacing) {
         for (let y = 0; y < canvas.height; y += spacing) {
           const roundedX = Math.round(x + offset);
           const roundedY = Math.round(y + offset);
-          let isNearText = false;
-          for (let px = -pSpacing; px <= pSpacing; px++) {
-            for (let py = -pSpacing; py <= pSpacing; py++) {
-              if (pPixelCoords.has(`${roundedX + px},${roundedY + py}`)) {
-                isNearText = true;
-                break;
-              }
+          let tooClose = false;
+          for (const [px, py] of pPixelCoords) {
+            const dx = px - roundedX;
+            const dy = py - roundedY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance < exclusionRadius) {
+              tooClose = true;
+              break;
             }
-            if (isNearText) break;
           }
-          if (!isNearText) {
+          if (!tooClose) {
             spawnPixel(roundedX, roundedY);
           }
         }
@@ -198,7 +198,28 @@
       });
     });
 
+    canvas.addEventListener('touchmove', (e) => {
+      const touch = e.touches[0];
+      const rect = canvas.getBoundingClientRect();
+      mouseX = touch.clientX - rect.left;
+      mouseY = touch.clientY - rect.top;
+      const radius = 50;
+      pixels.forEach(p => {
+        const dx = p.x - mouseX;
+        const dy = p.y - mouseY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        p.hovered = distance < radius;
+      });
+    });
+
     window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      pixels.length = 0;
+      generatePixelsGrid();
+    });
+
+    window.addEventListener('orientationchange', () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
       pixels.length = 0;
