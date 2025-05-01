@@ -77,6 +77,11 @@
       const b = Math.floor(Math.random() * 255);
       ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.3)`;
       ctx.fillRect(x - size / 2, y - size / 2, size, size);
+      
+            // Erase the pixel after 3 seconds
+      setTimeout(() => {
+        ctx.clearRect(x - size / 2, y - size / 2, size, size);
+      }, 3000);
     }
 
     window.addEventListener('mousemove', (e) => {
