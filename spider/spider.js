@@ -1,14 +1,13 @@
-// spider.js
+// spider.js (Pixel Grid Flashing Green)
 
 const canvas = document.getElementById("spiderCanvas");
 const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const matrixChars = "アァイィウヴエェオカガキギクグケゲコゴサザシジスズセゼソゾタダチッヂヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモヤユヨラリルレロワヲン0123456789".split("");
-const fontSize = 16;
-const columns = canvas.width / fontSize;
-const drops = Array(Math.floor(columns)).fill(1);
+const pixelSize = 16;
+const cols = Math.floor(canvas.width / pixelSize);
+const rows = Math.floor(canvas.height / pixelSize);
 
 function drawHallwayBackground() {
   const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
@@ -36,30 +35,23 @@ function drawHallwayBackground() {
   }
 }
 
-function drawMatrix() {
-  ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  ctx.fillStyle = "#0F0";
-  ctx.font = fontSize + "px monospace";
-
-  for (let i = 0; i < drops.length; i++) {
-    const text = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-      drops[i] = 0;
+function drawFlashingPixels() {
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      if (Math.random() > 0.9) {
+        ctx.fillStyle = "#0f0";
+      } else {
+        ctx.fillStyle = "black";
+      }
+      ctx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
     }
-    drops[i] += 0.15; // even slower text
   }
 }
 
 function animate() {
   drawHallwayBackground();
-  drawMatrix();
+  drawFlashingPixels();
   requestAnimationFrame(animate);
 }
 
 animate();
-
-
