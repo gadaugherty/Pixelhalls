@@ -12,13 +12,13 @@ class Spider {
   }
 
   draw() {
-    ctx.fillStyle = '#000';
+    ctx.fillStyle = '#00ff00'; // bright green body
     ctx.beginPath();
-    ctx.arc(this.x, this.y, 5, 0, Math.PI * 2); // body
+    ctx.arc(this.x, this.y, 5, 0, Math.PI * 2);
     ctx.fill();
 
-    // legs
-    ctx.strokeStyle = '#000';
+    ctx.strokeStyle = '#00ff00'; // green legs
+    ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(this.x - 5, this.y); ctx.lineTo(this.x - 10, this.y - 5);
     ctx.moveTo(this.x + 5, this.y); ctx.lineTo(this.x + 10, this.y - 5);
