@@ -1,4 +1,4 @@
-// spider.js
+// spiders.js
 
 const canvas = document.getElementById("spiderCanvas");
 const ctx = canvas.getContext("2d");
@@ -10,12 +10,31 @@ const fontSize = 16;
 const columns = canvas.width / fontSize;
 const drops = Array(Math.floor(columns)).fill(1);
 
-// Spider data
-const spider = Array.from({ length: 15 }, () => ({
-  x: Math.random() * canvas.width,
-  y: -Math.random() * canvas.height,
-  speed: 1 + Math.random() * 2
-}));
+function drawHallwayBackground() {
+  const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+  grad.addColorStop(0, "#000");
+  grad.addColorStop(0.5, "#111");
+  grad.addColorStop(1, "#000");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.strokeStyle = "#0f0";
+  ctx.lineWidth = 0.2;
+
+  for (let i = 0; i < canvas.width; i += 40) {
+    ctx.beginPath();
+    ctx.moveTo(canvas.width / 2, canvas.height);
+    ctx.lineTo(i, 0);
+    ctx.stroke();
+  }
+
+  for (let i = 0; i < canvas.width; i += 40) {
+    ctx.beginPath();
+    ctx.moveTo(canvas.width / 2, canvas.height);
+    ctx.lineTo(canvas.width - i, 0);
+    ctx.stroke();
+  }
+}
 
 function drawMatrix() {
   ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
@@ -31,50 +50,15 @@ function drawMatrix() {
     if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
       drops[i] = 0;
     }
-    drops[i]++;
+    drops[i] += 0.3; // slower text
   }
 }
 
-function drawSpider() {
-  ctx.strokeStyle = "white";
-  ctx.fillStyle = "black";
-  ctx.lineWidth = 1;
-
-  spider.forEach(spider => {
-    // Draw the string
-    ctx.beginPath();
-    ctx.moveTo(spider.x, 0);
-    ctx.lineTo(spider.x, spider.y);
-    ctx.stroke();
-
-    // Draw the spider body
-    ctx.beginPath();
-    ctx.arc(spider.x, spider.y, 6, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Legs (simple stick legs)
-    for (let i = -1; i <= 1; i += 2) {
-      ctx.beginPath();
-      ctx.moveTo(spider.x, spider.y);
-      ctx.lineTo(spider.x + i * 8, spider.y + 4);
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.moveTo(spider.x, spider.y);
-      ctx.lineTo(spider.x + i * 8, spider.y - 4);
-      ctx.stroke();
-    }
-
-    // Move spider down slowly
-    spider.y += spider.speed;
-    if (spider.y > canvas.height) spider.y = -10;
-  });
-}
-
 function animate() {
+  drawHallwayBackground();
   drawMatrix();
-  drawSpiders();
   requestAnimationFrame(animate);
 }
 
 animate();
+
