@@ -1,4 +1,4 @@
-// spiders.js
+// spider.js
 
 const canvas = document.getElementById("spiderCanvas");
 const ctx = canvas.getContext("2d");
@@ -50,7 +50,7 @@ function drawMatrix() {
     if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
       drops[i] = 0;
     }
-    drops[i] += 0.3; // slower text
+    drops[i] += 0.15; // even slower text
   }
 }
 
@@ -61,4 +61,5 @@ function animate() {
 }
 
 animate();
+
 
