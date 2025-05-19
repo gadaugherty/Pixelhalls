@@ -1,4 +1,4 @@
-// spiders.js
+// spider.js
 
 const canvas = document.getElementById("spiderCanvas");
 const ctx = canvas.getContext("2d");
@@ -11,7 +11,7 @@ const columns = canvas.width / fontSize;
 const drops = Array(Math.floor(columns)).fill(1);
 
 // Spider data
-const spiders = Array.from({ length: 15 }, () => ({
+const spider = Array.from({ length: 15 }, () => ({
   x: Math.random() * canvas.width,
   y: -Math.random() * canvas.height,
   speed: 1 + Math.random() * 2
@@ -35,12 +35,12 @@ function drawMatrix() {
   }
 }
 
-function drawSpiders() {
+function drawSpider() {
   ctx.strokeStyle = "white";
   ctx.fillStyle = "black";
   ctx.lineWidth = 1;
 
-  spiders.forEach(spider => {
+  spider.forEach(spider => {
     // Draw the string
     ctx.beginPath();
     ctx.moveTo(spider.x, 0);
