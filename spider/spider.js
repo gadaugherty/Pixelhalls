@@ -10,22 +10,9 @@ const cols = Math.floor(canvas.width / pixelSize);
 const rows = Math.floor(canvas.height / pixelSize);
 
 function drawHallwayBackground() {
-  const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-  grad.addColorStop(0, "#000");
-  grad.addColorStop(0.5, "#111");
-  grad.addColorStop(1, "#000");
-  ctx.fillStyle = grad;
+  ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  ctx.strokeStyle = "#0f0";
-  ctx.lineWidth = 0.2;
-
-  for (let i = 0; i < canvas.width; i += 40) {
-    ctx.beginPath();
-    ctx.moveTo(canvas.width / 2, canvas.height);
-    ctx.lineTo(i, 0);
-    ctx.stroke();
-  }
+}
 
   for (let i = 0; i < canvas.width; i += 40) {
     ctx.beginPath();
