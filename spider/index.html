@@ -13,10 +13,53 @@
     canvas {
       display: block;
     }
+
+    #menu {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(0, 0, 0, 0.8);
+      color: #00ff00;
+      font-family: monospace;
+      text-align: center;
+      padding: 30px;
+      border: 2px solid #00ff00;
+      border-radius: 10px;
+    }
+
+    .menu-button {
+      background: none;
+      border: 2px solid #00ff00;
+      color: #00ff00;
+      font-size: 20px;
+      font-family: monospace;
+      padding: 10px 20px;
+      margin: 10px 0;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .menu-button:hover {
+      background-color: #00ff00;
+      color: black;
+    }
+
+    #gameCanvas {
+      z-index: -1;
+    }
   </style>
 </head>
 <body>
-  <canvas id="spiderCanvas"></canvas>
+  <div id="menu">
+    <h1>🐜 Squash the Spiders 🕷️</h1>
+    <button class="menu-button" id="startBtn">Start New Game</button><br/>
+    <button class="menu-button" id="continueBtn">Continue</button><br/>
+    <button class="menu-button" id="settingsBtn">Settings</button>
+  </div>
+
+  <canvas id="gameCanvas"></canvas>
+
   <script src="spider.js"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-const canvas = document.getElementById('spiderCanvas');
+const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 canvas.width = window.innerWidth;
@@ -21,13 +21,11 @@ class Spider {
   draw() {
     if (!this.alive) return;
 
-    // Body
     ctx.fillStyle = '#00ff00';
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     ctx.fill();
 
-    // Legs
     ctx.strokeStyle = '#00ff00';
     ctx.lineWidth = 2;
     const legLength = 15;
@@ -60,19 +58,21 @@ class Spider {
 }
 
 const spiders = [];
-for (let i = 0; i < 10; i++) {
-  spiders.push(new Spider(Math.random() * canvas.width, Math.random() * canvas.height));
+let animationActive = false;
+
+function spawnSpiders() {
+  for (let i = 0; i < 10; i++) {
+    spiders.push(new Spider(Math.random() * canvas.width, Math.random() * canvas.height));
+  }
 }
 
 function animate() {
+  if (!animationActive) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   spiders.forEach(spider => spider.update());
   requestAnimationFrame(animate);
 }
 
-animate();
-
-// Touch or click to squash
 function handleTap(x, y) {
   spiders.forEach(spider => {
     if (spider.isClicked(x, y)) {
@@ -88,4 +88,20 @@ canvas.addEventListener('click', (e) => {
 canvas.addEventListener('touchstart', (e) => {
   const touch = e.touches[0];
   handleTap(touch.clientX, touch.clientY);
+});
+
+// --- MENU EVENTS ---
+document.getElementById('startBtn').addEventListener('click', () => {
+  document.getElementById('menu').style.display = 'none';
+  animationActive = true;
+  spawnSpiders();
+  animate();
+});
+
+document.getElementById('continueBtn').addEventListener('click', () => {
+  alert('Continue feature not yet implemented.');
+});
+
+document.getElementById('settingsBtn').addEventListener('click', () => {
+  alert('Settings menu coming soon!');
 });
