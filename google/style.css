@@ -29,6 +29,19 @@ body {
 .logo .yellow { color: #F4B400; }
 .logo .green { color: #0F9D58; }
 
+/* Specific letters for PixelSearch */
+.logo .p { color: #4285F4; }     /* Blue */
+.logo .i { color: #DB4437; }     /* Red */
+.logo .x { color: #F4B400; }     /* Yellow */
+.logo .e { color: #4285F4; }     /* Blue */
+.logo .l { color: #0F9D58; }     /* Green */
+.logo .s { color: #DB4437; }     /* Red */
+.logo .e2 { color: #F4B400; }    /* Yellow */
+.logo .a { color: #4285F4; }     /* Blue */
+.logo .r { color: #0F9D58; }     /* Green */
+.logo .c { color: #DB4437; }     /* Red */
+.logo .h { color: #F4B400; }     /* Yellow */
+
 .search-box input[type="text"] {
   width: 500px;
   height: 40px;
@@ -57,15 +70,3 @@ body {
   border: 1px solid #c6c6c6;
 }
 
-/* Add styling for PixelSearch letters */
-.logo .p { color: #4285F4; }     /* P - Blue */
-.logo .i { color: #DB4437; }     /* i - Red */
-.logo .x { color: #F4B400; }     /* x - Yellow */
-.logo .e { color: #4285F4; }     /* e - Blue */
-.logo .l { color: #0F9D58; }     /* l - Green */
-.logo .s { color: #DB4437; }     /* S - Red */
-.logo .e2 { color: #F4B400; }    /* e - Yellow */
-.logo .a { color: #4285F4; }     /* a - Blue */
-.logo .r { color: #0F9D58; }     /* r - Green */
-.logo .c { color: #DB4437; }     /* c - Red */
-.logo .h { color: #F4B400; }     /* h - Yellow */
