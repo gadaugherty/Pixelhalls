@@ -2,14 +2,54 @@ body {
   margin: 0;
   font-family: Arial, sans-serif;
   background: white;
+}
+
+/* Header styling */
+.header {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  height: 100vh;
-  flex-direction: column;
+  padding: 15px 30px;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.header-left a,
+.header-right a {
+  margin: 0 10px;
+  color: #202124; /* near-black */
+  text-decoration: none;
+}
+
+.header-left,
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.header-right img.profile {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-left: 10px;
+}
+
+.header-right .grid-icon {
+  width: 20px;
+  height: 20px;
+  background: url('https://ssl.gstatic.com/gb/images/bar/al-icon.png') no-repeat center;
+  background-size: contain;
+  margin-left: 10px;
+  cursor: pointer;
 }
 
 .container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 60px);
   text-align: center;
 }
 
@@ -18,18 +58,14 @@ body {
   font-weight: bold;
   letter-spacing: -3px;
   margin-bottom: 20px;
+  margin-top: 60px;
 }
 
 .logo span {
   display: inline-block;
 }
 
-.logo .blue { color: #4285F4; }
-.logo .red { color: #DB4437; }
-.logo .yellow { color: #F4B400; }
-.logo .green { color: #0F9D58; }
-
-/* Specific letters for PixelSearch */
+/* Google-style color scheme for "PixelSearch" */
 .logo .p { color: #4285F4; }     /* Blue */
 .logo .i { color: #DB4437; }     /* Red */
 .logo .x { color: #F4B400; }     /* Yellow */
@@ -69,4 +105,3 @@ body {
 .buttons input[type="submit"]:hover {
   border: 1px solid #c6c6c6;
 }
-
