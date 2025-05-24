@@ -1,3 +1,4 @@
+/* Base styles */
 body {
   display: flex;
   font-family: Arial, sans-serif;
@@ -13,6 +14,14 @@ body {
   border-right: 1px solid #ccc;
 }
 
+.sidebar nav a {
+  display: block;
+  margin: 10px 0;
+  text-decoration: none;
+  color: black;
+  font-weight: bold;
+}
+
 .feed {
   flex-grow: 1;
   padding: 20px;
@@ -23,6 +32,8 @@ body {
   height: 60px;
   resize: none;
   font-size: 16px;
+  padding: 10px;
+  box-sizing: border-box;
 }
 
 .tweet-box button {
@@ -45,4 +56,34 @@ body {
   padding: 15px;
   margin-bottom: 10px;
   border-radius: 10px;
+}
+
+/* Responsive styles for mobile */
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .feed {
+    padding: 10px;
+  }
+
+  .tweet-box button {
+    float: none;
+    width: 100%;
+    margin-top: 5px;
+    font-size: 16px;
+    padding: 12px;
+  }
+
+  .tweet-box textarea {
+    font-size: 14px;
+  }
 }
