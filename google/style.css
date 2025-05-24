@@ -16,10 +16,18 @@ body {
 .logo {
   font-size: 72px;
   font-weight: bold;
-  color: #4285F4;
   letter-spacing: -3px;
   margin-bottom: 20px;
 }
+
+.logo span {
+  display: inline-block;
+}
+
+.logo .blue { color: #4285F4; }
+.logo .red { color: #DB4437; }
+.logo .yellow { color: #F4B400; }
+.logo .green { color: #0F9D58; }
 
 .search-box input[type="text"] {
   width: 500px;
