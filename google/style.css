@@ -1,0 +1,50 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+}
+
+.container {
+  text-align: center;
+}
+
+.logo {
+  font-size: 72px;
+  font-weight: bold;
+  color: #4285F4;
+  letter-spacing: -3px;
+  margin-bottom: 20px;
+}
+
+.search-box input[type="text"] {
+  width: 500px;
+  height: 40px;
+  padding: 0 10px;
+  font-size: 16px;
+  border: 1px solid #dcdcdc;
+  border-radius: 24px;
+  outline: none;
+}
+
+.buttons {
+  margin-top: 20px;
+}
+
+.buttons input[type="submit"] {
+  background: #f8f9fa;
+  border: 1px solid #f8f9fa;
+  padding: 10px 20px;
+  margin: 5px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.buttons input[type="submit"]:hover {
+  border: 1px solid #c6c6c6;
+}
